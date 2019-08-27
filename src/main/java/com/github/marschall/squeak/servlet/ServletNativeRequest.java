@@ -16,8 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.graalvm.polyglot.HostAccess.Export;
-
 /**
  * Object passed to WAServerAdaptor >> #process:
  */
@@ -31,6 +29,8 @@ public final class ServletNativeRequest {
     this.response = response;
   }
 
+  // request methods
+
   public HttpServletRequest getRequest() {
     return request;
   }
@@ -39,12 +39,10 @@ public final class ServletNativeRequest {
     return response;
   }
 
-  @Export
   public String getRequestMethod() {
     return this.request.getMethod();
   }
 
-  @Export
   public String getQueryStringRaw() {
     // not decoded
     StringBuilder builder = new StringBuilder();
@@ -65,7 +63,6 @@ public final class ServletNativeRequest {
     return requestURI + queryString;
   }
 
-  @Export
   public String getRequestBodyAsString() throws IOException {
     StringBuilder builder = new StringBuilder();
     char[] buffer = new char[8192];
@@ -80,17 +77,14 @@ public final class ServletNativeRequest {
     return builder.toString();
   }
 
-  @Export
   public String getRequestAddressString() {
     return this.request.getRemoteAddr();
   }
 
-  @Export
   public Cookie[] getCookies() {
     return this.request.getCookies();
   }
 
-  @Export
   public Entry<String, String[]>[] getRequestHeaders() {
     List<Entry<String, String[]>> result = new ArrayList<>();
     Enumeration<String> headerNames = this.request.getHeaderNames();
@@ -102,7 +96,6 @@ public final class ServletNativeRequest {
     return (Entry<String, String[]>[]) result.toArray();
   }
 
-  @Export
   public Entry<String, String[]>[] getRequestFields() {
     List<Entry<String, String[]>> result = new ArrayList<>();
     Enumeration<String> parameterNames = this.request.getParameterNames();
@@ -114,7 +107,6 @@ public final class ServletNativeRequest {
     return (Entry<String, String[]>[]) result.toArray();
   }
 
-  @Export
   public ServletFile[] getServletFiles() throws IOException, ServletException {
     if (isMultipartFormData()) {
       Collection<Part> parts = this.request.getParts();
@@ -162,15 +154,40 @@ public final class ServletNativeRequest {
     return result.toArray(new String[0]);
   }
 
-  @Export
   public String getSslSessionId() {
     // https://stackoverflow.com/questions/6269416/can-a-servlet-get-https-session-id
     return (String) this.request.getAttribute("javax.servlet.request.ssl_session_id");
   }
 
-  @Export
   public String getRequestVersion() {
     return this.request.getProtocol();
+  }
+
+  // response methods
+
+  public void setResponseStatus(int status, String message) {
+    // TODO message
+    this.response.setStatus(status);
+  }
+
+  public void addHeader(String key, String value) {
+    this.response.addHeader(key, value);
+  }
+
+  public Cookie newCookie(String name, String value) {
+    return new Cookie(name, value);
+  }
+
+  public void addCookie(Cookie cookie) {
+    this.response.addCookie(cookie);
+  }
+
+  public void setResponseContentsAsString(String contents) throws IOException {
+    this.response.getWriter().append(contents);
+  }
+
+  public void setResponseContentsAsByteArray(byte[] contents) throws IOException {
+    this.response.getOutputStream().write(contents);
   }
 
 }

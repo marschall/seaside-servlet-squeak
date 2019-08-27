@@ -11,9 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.EnvironmentAccess;
-import org.graalvm.polyglot.HostAccess;
-import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.Value;
 
 /**
@@ -23,13 +20,15 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   private static final String IMAGE_LOCATION_PARAMETER = "squeak.image.location";
 
-  private static final String LANGUAGE = "squeak";
+  private static final String LANGUAGE = "squeaksmalltalk";
 
   private volatile ServletConfig config;
 
   private volatile Context graalContext;
 
-  private volatile Value seasideAdpator;
+  private volatile Value seasideAdaptor;
+  
+  private final Object imageLock = new Object();
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -61,22 +60,35 @@ public class GraalSqueakBridgeServlet implements Servlet {
   // Squeak methods
   
   private String getImageLocation() {
-    return this.config.getInitParameter(IMAGE_LOCATION_PARAMETER);
+    String location = this.config.getInitParameter(IMAGE_LOCATION_PARAMETER);
+    return this.config.getServletContext().getRealPath(location);
+  }
+  
+  public static void main(String[] args) {
+    GraalSqueakBridgeServlet servlet = new GraalSqueakBridgeServlet();
+    servlet.loadSqueakImage();
   }
 
   protected void loadSqueakImage() {
     this.graalContext = Context.newBuilder(LANGUAGE)
-        .allowNativeAccess(true)
-        .allowEnvironmentAccess(EnvironmentAccess.INHERIT)
-        .allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
-        .allowIO(true)
+//        .option(LANGUAGE + ".ImagePath", this.getImageLocation())
+        .option(LANGUAGE + ".ImagePath", "/Users/marschall/Hacking/Squeak/graalsqueak/graalsqueak-0.8.4/graalsqueak-0.8.4-seaside.image")
+        .allowAllAccess(true)
+//        .allowNativeAccess(true)
+//        .allowEnvironmentAccess(EnvironmentAccess.INHERIT)
+//        .allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
+//        .allowIO(true)
         .build();
-    this.seasideAdpator = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor new");
+    this.seasideAdaptor = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor instance");
   }
 
   protected void dispatchToSeaside(HttpServletRequest request, HttpServletResponse response) {
     ServletNativeRequest nativeRequest = new ServletNativeRequest(request, response);
-    this.seasideAdpator.invokeMember("process:", nativeRequest);
+    // GraalSqueak is not thread safe so we have to lock here
+    // even though this is forbidden in Java EE
+    synchronized (this.imageLock) {
+      this.seasideAdaptor.invokeMember("process:", nativeRequest);
+    }
   }
 
   protected void stopSqueakImage() {

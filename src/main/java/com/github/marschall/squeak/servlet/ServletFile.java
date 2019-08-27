@@ -6,7 +6,7 @@ import org.graalvm.polyglot.HostAccess.Export;
  * An object that can be easily translated to a WAFile.
  */
 public final class ServletFile {
-  
+
   private final String partName;
   private final String fileName;
   private final String contentType;
@@ -18,7 +18,7 @@ public final class ServletFile {
     this.contentType = contentType;
     this.contents = contents;
   }
-  
+
   @Export
   public String getPartName() {
     return partName;
@@ -38,5 +38,5 @@ public final class ServletFile {
   public byte[] getContents() {
     return contents;
   }
-  
+
 }

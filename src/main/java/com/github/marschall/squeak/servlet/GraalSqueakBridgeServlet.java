@@ -20,14 +20,16 @@ import org.graalvm.polyglot.Value;
  * Loads a Squeak image and dispatches all requests to Seaside in the image.
  */
 public class GraalSqueakBridgeServlet implements Servlet {
-  
+
+  private static final String IMAGE_LOCATION_PARAMETER = "squeak.image.location";
+
   private static final String LANGUAGE = "squeak";
 
   private volatile ServletConfig config;
 
-  private volatile Context context;
+  private volatile Context graalContext;
 
-  private volatile Value adpator;
+  private volatile Value seasideAdpator;
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -55,27 +57,31 @@ public class GraalSqueakBridgeServlet implements Servlet {
     this.stopSqueakImage();
     this.config = null;
   }
-  
+
   // Squeak methods
+  
+  private String getImageLocation() {
+    return this.config.getInitParameter(IMAGE_LOCATION_PARAMETER);
+  }
 
   protected void loadSqueakImage() {
-    this.context = Context.newBuilder(LANGUAGE)
+    this.graalContext = Context.newBuilder(LANGUAGE)
         .allowNativeAccess(true)
         .allowEnvironmentAccess(EnvironmentAccess.INHERIT)
         .allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
         .allowIO(true)
         .build();
-    this.adpator = this.context.eval(LANGUAGE, "WAServletServerAdaptor new");
+    this.seasideAdpator = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor new");
   }
 
   protected void dispatchToSeaside(HttpServletRequest request, HttpServletResponse response) {
     ServletNativeRequest nativeRequest = new ServletNativeRequest(request, response);
-    this.adpator.invokeMember("process:", nativeRequest);
+    this.seasideAdpator.invokeMember("process:", nativeRequest);
   }
 
   protected void stopSqueakImage() {
-    this.context.close();
-    this.context = null;
+    this.graalContext.close();
+    this.graalContext = null;
   }
 
 }

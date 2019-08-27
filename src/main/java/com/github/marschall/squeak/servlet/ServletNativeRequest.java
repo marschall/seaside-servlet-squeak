@@ -113,7 +113,7 @@ public final class ServletNativeRequest {
     }
     return (Entry<String, String[]>[]) result.toArray();
   }
-  
+
   @Export
   public ServletFile[] getServletFiles() throws IOException, ServletException {
     if (isMultipartFormData()) {
@@ -133,7 +133,7 @@ public final class ServletNativeRequest {
       return new ServletFile[0];
     }
   }
-  
+
   private static byte[] getContents(Part part) throws IOException {
     long size = part.getSize();
     if (size > Integer.MAX_VALUE) {

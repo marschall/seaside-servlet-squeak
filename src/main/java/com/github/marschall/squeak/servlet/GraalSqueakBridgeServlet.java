@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.EnvironmentAccess;
+import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.Value;
 
 /**
@@ -58,6 +61,9 @@ public class GraalSqueakBridgeServlet implements Servlet {
   protected void loadSqueakImage() {
     this.context = Context.newBuilder(LANGUAGE)
         .allowNativeAccess(true)
+        .allowEnvironmentAccess(EnvironmentAccess.INHERIT)
+        .allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
+        .allowIO(true)
         .build();
     this.adpator = this.context.eval(LANGUAGE, "WAServletServerAdaptor new");
   }

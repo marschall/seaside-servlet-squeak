@@ -1,3 +1,6 @@
 converting-request
 requestCookiesFor: aNativeRequest
-	self notYetImplemented
+	^ aNativeRequest getCookies collect: [ :each |
+		WARequestCookie
+			key: each getName
+			value: each getValue ]

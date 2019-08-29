@@ -20,7 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 /**
- * Object passed to WAServerAdaptor &gt;&gt; #process:
+ * Object passed to {@code WAServerAdaptor >> #process:}.
+ * Can easily be converted to a {@code WARequest} and from a
+ * {@code WAResponse}.
  */
 public final class ServletNativeRequest {
 
@@ -67,6 +69,12 @@ public final class ServletNativeRequest {
   }
 
   public String getRequestBodyAsString() throws IOException {
+    if (isFormUrlencoded()) {
+      // if the body is URL encoded and we read it here fully
+      // the parameters in the body will be missing from getParameterNames()
+      // which is called in getRequestFields() after this method
+      return null;
+    }
     StringBuilder builder = new StringBuilder();
     char[] buffer = new char[8192];
     try (BufferedReader reader = this.request.getReader()) {
@@ -78,6 +86,10 @@ public final class ServletNativeRequest {
       }
     }
     return builder.toString();
+  }
+
+  private boolean isFormUrlencoded() {
+    return Objects.equals(this.request.getContentType(), "application/x-www-form-urlencoded");
   }
 
   public String getRequestAddressString() {

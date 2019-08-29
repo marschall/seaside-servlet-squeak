@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyArray;
+
 /**
- * Object passed to WAServerAdaptor >> #process:
+ * Object passed to WAServerAdaptor &gt;&gt; #process:
  */
 public final class ServletNativeRequest {
 
@@ -56,11 +59,11 @@ public final class ServletNativeRequest {
     builder.append(scheme).append("://");
     builder.append(serverName);
     builder.append(':').append(portNumber);
-    builder.append('/').append(requestURI);
+    builder.append(requestURI);
     if (queryString != null) {
       builder.append('?').append(queryString);
     }
-    return requestURI + queryString;
+    return builder.toString();
   }
 
   public String getRequestBodyAsString() throws IOException {
@@ -85,7 +88,7 @@ public final class ServletNativeRequest {
     return this.request.getCookies();
   }
 
-  public Entry<String, String[]>[] getRequestHeaders() {
+  public List<Entry<String, String[]>> getRequestHeaders() {
     List<Entry<String, String[]>> result = new ArrayList<>();
     Enumeration<String> headerNames = this.request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
@@ -93,10 +96,10 @@ public final class ServletNativeRequest {
       Enumeration<String> headers = request.getHeaders(headerName);
       result.add(new SimpleImmutableEntry<>(headerName, toArray(headers)));
     }
-    return (Entry<String, String[]>[]) result.toArray();
+    return result;
   }
 
-  public Entry<String, String[]>[] getRequestFields() {
+  public List<Entry<String, String[]>> getRequestFields() {
     List<Entry<String, String[]>> result = new ArrayList<>();
     Enumeration<String> parameterNames = this.request.getParameterNames();
     while (parameterNames.hasMoreElements()) {
@@ -104,7 +107,7 @@ public final class ServletNativeRequest {
       String[] parameters = request.getParameterValues(parameterName);
       result.add(new SimpleImmutableEntry<>(parameterName, parameters));
     }
-    return (Entry<String, String[]>[]) result.toArray();
+    return result;
   }
 
   public ServletFile[] getServletFiles() throws IOException, ServletException {
@@ -165,9 +168,9 @@ public final class ServletNativeRequest {
 
   // response methods
 
-  public void setResponseStatus(int status, String message) {
+  public void setResponseStatus(long status, String message) {
     // TODO message
-    this.response.setStatus(status);
+    this.response.setStatus((int) status);
   }
 
   public void addHeader(String key, String value) {

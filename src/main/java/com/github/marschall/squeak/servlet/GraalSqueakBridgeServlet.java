@@ -63,16 +63,11 @@ public class GraalSqueakBridgeServlet implements Servlet {
     String location = this.config.getInitParameter(IMAGE_LOCATION_PARAMETER);
     return this.config.getServletContext().getRealPath(location);
   }
-  
-  public static void main(String[] args) {
-    GraalSqueakBridgeServlet servlet = new GraalSqueakBridgeServlet();
-    servlet.loadSqueakImage();
-  }
 
   protected void loadSqueakImage() {
     this.graalContext = Context.newBuilder(LANGUAGE)
-//        .option(LANGUAGE + ".ImagePath", this.getImageLocation())
-        .option(LANGUAGE + ".ImagePath", "/Users/marschall/Hacking/Squeak/graalsqueak/graalsqueak-0.8.4/graalsqueak-0.8.4-seaside.image")
+        .option(LANGUAGE + ".ImagePath", this.getImageLocation())
+//        .option(LANGUAGE + ".ImagePath", "/Users/marschall/Hacking/Squeak/graalsqueak/graalsqueak-0.8.4/graalsqueak-0.8.4-seaside.image")
         .allowAllAccess(true)
 //        .allowNativeAccess(true)
 //        .allowEnvironmentAccess(EnvironmentAccess.INHERIT)

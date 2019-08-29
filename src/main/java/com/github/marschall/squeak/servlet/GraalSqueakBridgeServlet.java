@@ -59,21 +59,24 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   // Squeak methods
   
-  private String getImageLocation() {
+  private String getImageLocation() throws ServletException {
     String location = this.config.getInitParameter(IMAGE_LOCATION_PARAMETER);
+    if (location == null) {
+      throw new ServletException("init parameter: \"" + IMAGE_LOCATION_PARAMETER + "\" missing");
+    }
     return this.config.getServletContext().getRealPath(location);
   }
 
-  protected void loadSqueakImage() {
+  protected void loadSqueakImage() throws ServletException {
     this.graalContext = Context.newBuilder(LANGUAGE)
         .option(LANGUAGE + ".ImagePath", this.getImageLocation())
-//        .option(LANGUAGE + ".ImagePath", "/Users/marschall/Hacking/Squeak/graalsqueak/graalsqueak-0.8.4/graalsqueak-0.8.4-seaside.image")
         .allowAllAccess(true)
 //        .allowNativeAccess(true)
 //        .allowEnvironmentAccess(EnvironmentAccess.INHERIT)
 //        .allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
 //        .allowIO(true)
         .build();
+    String contextPath = this.config.getServletContext().getContextPath();
     this.seasideAdaptor = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor instance");
   }
 

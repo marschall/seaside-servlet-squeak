@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
@@ -15,9 +16,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-
-import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.proxy.ProxyArray;
 
 /**
  * Object passed to WAServerAdaptor &gt;&gt; #process:
@@ -110,22 +108,21 @@ public final class ServletNativeRequest {
     return result;
   }
 
-  public ServletFile[] getServletFiles() throws IOException, ServletException {
+  public List<ServletFile> getServletFiles() throws IOException, ServletException {
     if (isMultipartFormData()) {
       Collection<Part> parts = this.request.getParts();
-      ServletFile[] files = new ServletFile[parts.size()];
-      int i = 0;
+      List<ServletFile> files = new ArrayList<>(parts.size());
       for (Part part : parts) {
         String name = part.getName();
         String fileName = part.getSubmittedFileName();
         String contentType = part.getContentType();
         byte[] contents = getContents(part);
-        files[i++] = new ServletFile(name, fileName, contentType, contents);
+        files.add(new ServletFile(name, fileName, contentType, contents));
         part.delete();
       }
       return files;
     } else {
-      return new ServletFile[0];
+      return Collections.emptyList();
     }
   }
 
@@ -168,9 +165,10 @@ public final class ServletNativeRequest {
 
   // response methods
 
-  public void setResponseStatus(long status, String message) {
+  public void setResponseStatus(long status /* should be int but is bug in GraalSqueak */, String message) {
     // TODO message
-    this.response.setStatus((int) status);
+    // TODO GraalSqueak bug
+    this.response.setStatus(Math.toIntExact(status));
   }
 
   public void addHeader(String key, String value) {

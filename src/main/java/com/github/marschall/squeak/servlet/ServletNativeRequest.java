@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -83,8 +84,13 @@ public final class ServletNativeRequest {
     return this.request.getRemoteAddr();
   }
 
-  public Cookie[] getCookies() {
-    return this.request.getCookies();
+  public List<Cookie> getCookies() {
+    Cookie[] cookies = this.request.getCookies();
+    if (cookies == null) {
+      return Collections.emptyList();
+    } else {
+      return Arrays.asList(cookies);
+    }
   }
 
   public List<Entry<String, List<String>>> getRequestHeaders() {
@@ -143,7 +149,7 @@ public final class ServletNativeRequest {
   }
 
   private boolean isMultipartFormData() {
-    return this.request.getContentType().equals("multipart/form-data");
+    return Objects.equals(this.request.getContentType(), "multipart/form-data");
   }
 
   private static <T> List<T> toList(Enumeration<T> enumeration) {

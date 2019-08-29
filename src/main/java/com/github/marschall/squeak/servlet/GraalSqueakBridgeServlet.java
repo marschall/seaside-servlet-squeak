@@ -77,7 +77,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
 //        .allowIO(true)
         .build();
     String contextPath = this.config.getServletContext().getContextPath();
-    this.seasideAdaptor = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor instance");
+    this.seasideAdaptor = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor contextPath: '" + contextPath + "'");
   }
 
   protected void dispatchToSeaside(HttpServletRequest request, HttpServletResponse response) {

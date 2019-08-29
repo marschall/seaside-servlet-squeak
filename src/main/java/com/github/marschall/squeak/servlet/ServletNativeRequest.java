@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -86,24 +87,24 @@ public final class ServletNativeRequest {
     return this.request.getCookies();
   }
 
-  public List<Entry<String, String[]>> getRequestHeaders() {
-    List<Entry<String, String[]>> result = new ArrayList<>();
+  public List<Entry<String, List<String>>> getRequestHeaders() {
+    List<Entry<String, List<String>>> result = new ArrayList<>();
     Enumeration<String> headerNames = this.request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
       Enumeration<String> headers = request.getHeaders(headerName);
-      result.add(new SimpleImmutableEntry<>(headerName, toArray(headers)));
+      result.add(new SimpleImmutableEntry<>(headerName, toList(headers)));
     }
     return result;
   }
 
-  public List<Entry<String, String[]>> getRequestFields() {
-    List<Entry<String, String[]>> result = new ArrayList<>();
+  public List<Entry<String, List<String>>> getRequestFields() {
+    List<Entry<String, List<String>>> result = new ArrayList<>();
     Enumeration<String> parameterNames = this.request.getParameterNames();
     while (parameterNames.hasMoreElements()) {
       String parameterName = parameterNames.nextElement();
       String[] parameters = request.getParameterValues(parameterName);
-      result.add(new SimpleImmutableEntry<>(parameterName, parameters));
+      result.add(new SimpleImmutableEntry<>(parameterName, Arrays.asList(parameters)));
     }
     return result;
   }
@@ -145,13 +146,13 @@ public final class ServletNativeRequest {
     return this.request.getContentType().equals("multipart/form-data");
   }
 
-  private static String[] toArray(Enumeration<String> enumeration) {
-    List<String> result = new ArrayList<>(2);
+  private static <T> List<T> toList(Enumeration<T> enumeration) {
+    List<T> result = new ArrayList<>(2);
     while (enumeration.hasMoreElements()) {
-      String element =  enumeration.nextElement();
+      T element =  enumeration.nextElement();
       result.add(element);
     }
-    return result.toArray(new String[0]);
+    return result;
   }
 
   public String getSslSessionId() {

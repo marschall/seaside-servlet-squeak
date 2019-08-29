@@ -1,13 +1,15 @@
 converting-request
 requestFieldsFor: aNativeRequest
-	| headers |
+	| headers requestFields |
 	headers := GROrderedMultiMap new.
-	aNativeRequest getRequestFields do: [ :entry |
+	requestFields := aNativeRequest getRequestFields.
+	self list: requestFields size do: [ :entry |
 		| fieldName |
 		fieldName := entry getKey.
-		entry getValue do: [ :fieldValue |
+		self list: entry getValue do: [ :fieldValue |
 			headers at: fieldName add: fieldValue ] ].
-	aNativeRequest getServletFiles do: [ :each |
+
+	self list: aNativeRequest getServletFiles do: [ :each |
 		| file |
 		file := WAFile new
 			fileName: each getFileName;
@@ -15,4 +17,5 @@ requestFieldsFor: aNativeRequest
 			contents: each getContents;
 			yourself.
 		headers at: each getFileName add: file ].
+
 	^ headers

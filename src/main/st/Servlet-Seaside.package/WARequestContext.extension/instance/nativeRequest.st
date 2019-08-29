@@ -1,3 +1,3 @@
 *servlet-seaside
 nativeRequest
-	self properties at: #nativeRequest
+	^ self properties at: #nativeRequest

@@ -9,7 +9,7 @@ responseFrom: aRequestContext
 
 	"header"
 	aRequestContext response headers keysAndValuesDo: [ :key :value |
-		nativeRequest addHeader: key _: value ].
+		nativeRequest addHeader: key _: value greaseString ].
 	
 	"cookies"
 	aRequestContext response cookies do: [ :seasideCookie |

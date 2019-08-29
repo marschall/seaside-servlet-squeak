@@ -1,9 +1,10 @@
 converting-request
 requestFieldsFor: aNativeRequest
-	| headers requestFields |
+	| headers |
 	headers := GROrderedMultiMap new.
-	requestFields := aNativeRequest getRequestFields.
-	self list: requestFields size do: [ :entry |
+
+
+	self list: aNativeRequest getRequestFields do: [ :entry |
 		| fieldName |
 		fieldName := entry getKey.
 		self list: entry getValue do: [ :fieldValue |

@@ -63,5 +63,5 @@ Tips & Tricks
 
 Enable Graal compliation logging
 
-  export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
+    export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
 

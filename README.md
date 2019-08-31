@@ -53,9 +53,9 @@ Limitations
 -----------
 
 * Limitations inherited from GraalSqueak
-** As GraalSqueak is currently not thread safe we are limited to one concurrent request. This is especially damning in case of blocking IO like database access.
-** Continuations are not supported.
-** High memory consumption and allocation rate compared to OpenSmalltalk VM
+  * As GraalSqueak is currently not thread safe we are limited to one concurrent request. This is especially damning in case of blocking IO like database access.
+  * Continuations are not supported.
+  * High memory consumption and allocation rate compared to OpenSmalltalk VM
 * Initial performance is not good compared to GraalSqueak. At this point it is unclear how fast it would ultimately be once the optimizations stabilize.
 
 Tips & Tricks

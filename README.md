@@ -1,7 +1,7 @@
 Squeak Seaside Servlet Bridge
 =============================
 
-Run Seaside in a Servlet container using [GraalSqueak](https://github.com/hpi-swa/graalsqueak).
+Run [Seaside](http://www.seaside.st) in a Servlet container using [GraalSqueak](https://github.com/hpi-swa/graalsqueak).
 
 
 Usage
@@ -43,10 +43,21 @@ Make sure you explode WARs for Tomcat, this means having `unpackWARs="unpackWARs
 
 Make sure you have GraalSqueak installed in GraalVM.
 
+Requirements
+------------
+
+ * GraalVM 19.0.0
+ * Servlet 3.1
+
 Limitations
 -----------
 
 As GraalSqueak is currently not thread safe this is limited to one thread at a time. This is especially damning in case of blocking IO like database access.
 
+Tips & Tricks
+-------------
 
+Enable Graal compliation logging
+
+  export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
 

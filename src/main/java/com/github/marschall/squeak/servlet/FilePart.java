@@ -3,22 +3,22 @@ package com.github.marschall.squeak.servlet;
 /**
  * An object that can be easily translated to a WAFile.
  */
-public final class ServletFile {
+public final class FilePart extends FormPart {
 
-  private final String partName;
   private final String fileName;
   private final String contentType;
   private final byte[] contents;
 
-  ServletFile(String partName, String fileName, String contentType, byte[] contents) {
-    this.partName = partName;
+  FilePart(String partName, String fileName, String contentType, byte[] contents) {
+    super(partName);
     this.fileName = fileName;
     this.contentType = contentType;
     this.contents = contents;
   }
 
-  public String getPartName() {
-    return partName;
+  @Override
+  public boolean isFile() {
+    return true;
   }
 
   public String getFileName() {
@@ -31,6 +31,11 @@ public final class ServletFile {
 
   public byte[] getContents() {
     return contents;
+  }
+
+  @Override
+  public String toString() {
+    return "FilePart(partName: " + this.getPartName() + ", fileName: " + this.fileName + ')';
   }
 
 }

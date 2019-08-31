@@ -1,10 +1,13 @@
 package com.github.marschall.squeak.servlet;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +67,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
     if (location == null) {
       throw new ServletException("init parameter: \"" + IMAGE_LOCATION_PARAMETER + "\" missing");
     }
-    return this.config.getServletContext().getRealPath(location);
+    return getServletContext().getRealPath(location);
   }
 
   protected void loadSqueakImage() throws ServletException {
@@ -76,8 +79,31 @@ public class GraalSqueakBridgeServlet implements Servlet {
 //        .allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
 //        .allowIO(true)
         .build();
-    String contextPath = this.config.getServletContext().getContextPath();
-    this.seasideAdaptor = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor contextPath: '" + contextPath + "'");
+    String dispatcherPath = getDispatcherPath();
+    // TODO get encoding
+    this.seasideAdaptor = this.graalContext.eval(LANGUAGE, "WAServletServerAdaptor contextPath: '" + dispatcherPath + "'");
+  }
+
+  private String getDispatcherPath() throws ServletException {
+    ServletContext context = getServletContext();
+    String characterEncoding = context.getRequestCharacterEncoding();
+    if (characterEncoding == null) {
+      // TODO log warning
+    }
+    String servletName = this.config.getServletName();
+    ServletRegistration registration = context.getServletRegistration(servletName);
+    Collection<String> mappings = registration.getMappings();
+    if (mappings.isEmpty()) {
+      throw new ServletException("no mapping specified for servlet: " + servletName);
+    }
+    if (mappings.size() > 1) {
+      throw new ServletException("more than one mapping specified for servlet: " + servletName);
+    }
+    return context.getContextPath();
+  }
+
+  private ServletContext getServletContext() {
+    return this.config.getServletContext();
   }
 
   protected void dispatchToSeaside(HttpServletRequest request, HttpServletResponse response) {

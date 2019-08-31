@@ -3,6 +3,8 @@ package com.github.marschall.squeak.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +32,8 @@ public final class ServletNativeRequest {
   private final HttpServletResponse response;
 
   ServletNativeRequest(HttpServletRequest request, HttpServletResponse response) {
+    Objects.requireNonNull(request, "request");
+    Objects.requireNonNull(response, "response");
     this.request = request;
     this.response = response;
   }
@@ -75,7 +79,18 @@ public final class ServletNativeRequest {
       // which is called in getRequestFields() after this method
       return null;
     }
+    if (isMultipartFormData()) {
+      // if the body is form data and we read it here fully
+      // the parameters in the body will be missing from getServletFiles()
+      return null;
+    }
+    if (getRequestMethod().equals("GET")) {
+      // avoid buffer creating on GET
+      // TODO generalize
+      return null;
+    }
     StringBuilder builder = new StringBuilder();
+    // TODO read request size
     char[] buffer = new char[8192];
     try (BufferedReader reader = this.request.getReader()) {
       // TODO Java 10 #transferTo
@@ -122,30 +137,43 @@ public final class ServletNativeRequest {
     while (parameterNames.hasMoreElements()) {
       String parameterName = parameterNames.nextElement();
       String[] parameters = request.getParameterValues(parameterName);
-      result.add(new SimpleImmutableEntry<>(parameterName, Arrays.asList(parameters)));
+      List<String> parameterList;
+      if (parameters.length > 0) {
+        parameterList = Arrays.asList(parameters);
+      } else {
+        parameterList = Collections.emptyList();
+      }
+      result.add(new SimpleImmutableEntry<>(parameterName, parameterList ));
     }
     return result;
   }
 
-  public List<ServletFile> getServletFiles() throws IOException, ServletException {
+  public List<FormPart> getFormParts() throws IOException, ServletException {
     if (isMultipartFormData()) {
       Collection<Part> parts = this.request.getParts();
-      List<ServletFile> files = new ArrayList<>(parts.size());
+      List<FormPart> formParts = new ArrayList<>(parts.size());
       for (Part part : parts) {
         String name = part.getName();
         String fileName = part.getSubmittedFileName();
-        String contentType = part.getContentType();
-        byte[] contents = getContents(part);
-        files.add(new ServletFile(name, fileName, contentType, contents));
+        FormPart formPart;
+        if (fileName != null) {
+          // only if there is a file name it's a file
+          // if it is a normal multi part form field
+          // it is returned in getRequestFields
+          String contentType = part.getContentType();
+          byte[] contents = getContentsAsByteArray(part);
+          formPart = new FilePart(name, fileName, contentType, contents);
+          formParts.add(formPart);
+        }
         part.delete();
       }
-      return files;
+      return formParts;
     } else {
       return Collections.emptyList();
     }
   }
 
-  private static byte[] getContents(Part part) throws IOException {
+  private static byte[] getContentsAsByteArray(Part part) throws IOException {
     long size = part.getSize();
     if (size > Integer.MAX_VALUE) {
       throw new IOException("part too large");
@@ -159,9 +187,37 @@ public final class ServletNativeRequest {
     }
     return contents;
   }
+  
+  private String getContentsAsString(Part part) throws IOException {
+    long size = part.getSize();
+    if (size > Integer.MAX_VALUE) {
+      throw new IOException("part too large");
+    }
+    if (size == 0L) {
+      return null;
+    }
+    StringBuilder builder = new StringBuilder((int) size);
+    try (InputStream inputStream = part.getInputStream();
+         Reader reader = new InputStreamReader(inputStream, this.request.getCharacterEncoding())) {
+      int bufferSize = Math.min((int) size, 64);
+      // assume most form fields are small
+      char[] buffer = new char[bufferSize];
+      // TODO Java 10 #transferTo
+      int read = reader.read(buffer);
+      while (read != -1) {
+        builder.append(buffer, 0, read);
+        read = reader.read(buffer);
+      }
+    }
+    return builder.toString();
+  }
 
   private boolean isMultipartFormData() {
-    return Objects.equals(this.request.getContentType(), "multipart/form-data");
+    String contentType = this.request.getContentType();
+    if (contentType == null) {
+      return false;
+    }
+    return contentType.startsWith("multipart/form-data");
   }
 
   private static <T> List<T> toList(Enumeration<T> enumeration) {

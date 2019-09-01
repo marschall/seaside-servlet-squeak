@@ -43,11 +43,15 @@ Make sure you explode WARs for Tomcat, this means having `unpackWARs="unpackWARs
 
 Make sure you have GraalSqueak installed in GraalVM.
 
+Have a look at [marschall/squeak-servlet-demo](https://github.com/marschall/squeak-servlet-demo) for a complete demo project.
+
 Requirements
 ------------
 
  * GraalVM 19.0.0
- * Servlet 3.1
+ * GraalSqueak
+  * `gu install -L https://www.hpi.uni-potsdam.de/hirschfeld/artefacts/graalsqueak/graalsqueak-component-0.8.4-for-19.0.0.jar`
+ 	* Servlet 4.0, eg. Tomcat 9+ or any [Java EE 8 compatible application server](https://www.oracle.com/technetwork/java/javaee/overview/compatibility-jsp-136984.html)
 
 Limitations
 -----------
@@ -56,6 +60,7 @@ Limitations
   * As GraalSqueak is currently not thread safe we are limited to one concurrent request. This is especially damning in case of blocking IO like database access.
   * Continuations are not supported.
   * High memory consumption and allocation rate compared to OpenSmalltalk VM
+  * stack traces currently are not very useful
 * Initial performance is not good compared to GraalSqueak. At this point it is unclear how fast it would ultimately be once the optimizations stabilize.
 
 Tips & Tricks

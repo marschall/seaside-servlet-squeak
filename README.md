@@ -65,3 +65,9 @@ Enable Graal compliation logging
 
     export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
 
+Warm up the compiler
+
+    for run in {1..10}; do curl  'http://127.0.0.1:8080/tests/functional/WALotsaLinksFunctionalTest?_s=_eYKKM3Gl3XzVM5T&_k=JIp_6FO_QQ26nQob' > /dev/null; done
+
+
+

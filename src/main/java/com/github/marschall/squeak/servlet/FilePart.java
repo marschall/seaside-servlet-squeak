@@ -1,5 +1,7 @@
 package com.github.marschall.squeak.servlet;
 
+import org.graalvm.polyglot.Value;
+
 /**
  * An object that can be easily translated to a WAFile.
  */
@@ -7,9 +9,9 @@ public final class FilePart extends FormPart {
 
   private final String fileName;
   private final String contentType;
-  private final byte[] contents;
+  private final Value contents;
 
-  FilePart(String partName, String fileName, String contentType, byte[] contents) {
+  FilePart(String partName, String fileName, String contentType, Value contents) {
     super(partName);
     this.fileName = fileName;
     this.contentType = contentType;
@@ -29,7 +31,7 @@ public final class FilePart extends FormPart {
     return contentType;
   }
 
-  public byte[] getContents() {
+  public Value getContents() {
     return contents;
   }
 

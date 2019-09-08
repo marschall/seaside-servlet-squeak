@@ -50,8 +50,8 @@ Requirements
 
  * GraalVM 19.0.0
  * GraalSqueak
-  * `gu install -L https://www.hpi.uni-potsdam.de/hirschfeld/artefacts/graalsqueak/graalsqueak-component-0.8.4-for-19.0.0.jar`
- 	* Servlet 4.0, eg. Tomcat 9+ or any [Java EE 8 compatible application server](https://www.oracle.com/technetwork/java/javaee/overview/compatibility-jsp-136984.html)
+  * `gu install -u https://www.hpi.uni-potsdam.de/hirschfeld/artefacts/graalsqueak/graalsqueak-component-0.8.4-for-19.0.0.jar`
+ 	* Servlet 4.0, eg. Tomcat 9+ or any [Java EE 8 compatible application server](https://www.oracle.com/technetwork/java/javaee/overview/compatibility-jsp-136984.html), this means that Jetty is unfortunately currently not supported
 
 Limitations
 -----------

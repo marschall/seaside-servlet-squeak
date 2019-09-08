@@ -1,7 +1,7 @@
 {
 	"class" : {
-		"contextPath:" : "fn 8/29/2019 10:23",
-		"instance" : "pmm 8/27/2019 17:10" },
+		"path:encoding:" : "fn 9/7/2019 16:25",
+		"stopAllAdapters" : "fn 9/7/2019 16:25" },
 	"instance" : {
 		"basicStart" : "pmm 8/27/2019 17:03",
 		"basicStop" : "pmm 8/27/2019 17:03",
@@ -12,11 +12,12 @@
 		"isStopped" : "pmm 8/26/2019 16:38",
 		"isStopping" : "pmm 8/26/2019 16:38",
 		"list:collect:" : "fn 8/29/2019 09:01",
-		"list:do:" : "fn 8/29/2019 08:59",
+		"list:do:" : "fn 9/7/2019 16:18",
+		"partAsByteArray:" : "fn 9/7/2019 16:17",
 		"requestAddressFor:" : "pmm 8/26/2019 17:14",
 		"requestBodyFor:" : "pmm 8/26/2019 17:12",
 		"requestCookiesFor:" : "fn 8/29/2019 11:39",
-		"requestFieldsFor:" : "fn 8/30/2019 20:40",
+		"requestFieldsFor:" : "fn 9/7/2019 16:30",
 		"requestHeadersFor:" : "fn 8/29/2019 09:13",
 		"requestMethodFor:" : "pmm 8/26/2019 16:46",
 		"requestUrlFor:" : "pmm 8/26/2019 17:05",

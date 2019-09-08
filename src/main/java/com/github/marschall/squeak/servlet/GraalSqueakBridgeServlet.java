@@ -108,7 +108,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   private boolean supportsGetCharacterEncoding() {
     ServletContext context = getServletContext();
-    return context.getEffectiveMajorVersion() >= 4;
+    return context.getMajorVersion() >= 4;
   }
 
   private String getCharacterEncodingFromContext() {

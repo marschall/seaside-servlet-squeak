@@ -76,9 +76,10 @@ public class GraalSqueakBridgeServlet implements Servlet {
   }
 
   private void loadSqueakImage() throws ServletException {
-    this.graalContext = Context.newBuilder(LANGUAGE)
+    this.graalContext = Context.newBuilder()
         .option(LANGUAGE + ".ImagePath", this.getImageLocation())
         .allowAllAccess(true)
+        //.allowPolyglotAccess(PolyglotAccess.ALL)
         //.allowNativeAccess(true)
         //.allowEnvironmentAccess(EnvironmentAccess.INHERIT)
         //.allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated

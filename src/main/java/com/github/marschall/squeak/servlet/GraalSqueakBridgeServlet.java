@@ -42,6 +42,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
   public void init(ServletConfig config) throws ServletException {
     this.config = config;
     this.loadSqueakImage();
+    this.registerServerAdaptor();
   }
 
   @Override
@@ -85,6 +86,9 @@ public class GraalSqueakBridgeServlet implements Servlet {
         //.allowHostAccess(HostAccess.ALL) // Map.Entry methods are not annotated
         //.allowIO(true)
         .build();
+  }
+
+  private void registerServerAdaptor() throws ServletException {
     String dispatcherPath = getDispatcherPath();
     String encoding = this.getCharacterEncoding();
     this.seasideAdaptor = this.graalContext.eval(LANGUAGE,

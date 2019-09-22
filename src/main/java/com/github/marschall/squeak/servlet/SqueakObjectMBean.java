@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -21,17 +22,28 @@ import javax.management.ReflectionException;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 
+/**
+ * Exposes a Squeak Ooject in a {@link Value} as a {@link DynamicMBean}.
+ */
 public final class SqueakObjectMBean implements DynamicMBean {
   
   // TODO lock
   
-  private final Value value;
+  private final Value squeakObject;
   private final MBeanInfo mBeanInfo;
   private final Map<String, MBeanAttributeInfo> attributes;
   private final Map<String, MBeanOperationInfo> operations;
 
-  public SqueakObjectMBean(Value value, MBeanInfo mBeanInfo) {
-    this.value = value;
+  /**
+   * Constructs a new {@link SqueakObjectMBean}.
+   * 
+   * @param squeakObject the Squeak object, not {@code null}
+   * @param mBeanInfo the MBeanInfo describing {@code squeakObject}, not {@code null}
+   */
+  public SqueakObjectMBean(Value squeakObject, MBeanInfo mBeanInfo) {
+    Objects.requireNonNull(squeakObject, "squeakObject");
+    Objects.requireNonNull(mBeanInfo, "mBeanInfo");
+    this.squeakObject = squeakObject;
     this.mBeanInfo = mBeanInfo;
     this.attributes = toFeatureInfoMap(mBeanInfo.getAttributes());
     this.operations = toFeatureInfoMap(mBeanInfo.getOperations());
@@ -50,7 +62,7 @@ public final class SqueakObjectMBean implements DynamicMBean {
     }
     Value attributeValue;
     try {
-      attributeValue = this.value.invokeMember(attributeName);
+      attributeValue = this.squeakObject.invokeMember(attributeName);
     } catch (PolyglotException e) {
       throw new MBeanException(e, "could not get attribute: " + attributeName);
     } catch (UnsupportedOperationException e) {
@@ -82,7 +94,7 @@ public final class SqueakObjectMBean implements DynamicMBean {
     }
     String selector = attributeName + ':';
     try {
-      this.value.invokeMember(selector, attribute.getValue());
+      this.squeakObject.invokeMember(selector, attribute.getValue());
     } catch (PolyglotException e) {
       throw new MBeanException(e, "could not set attribute: " + attributeName);
     } catch (UnsupportedOperationException e) {
@@ -129,7 +141,7 @@ public final class SqueakObjectMBean implements DynamicMBean {
       throw new ReflectionException(new IllegalArgumentException("action: " + actionName + " does not exist"), "can not invoke: " + actionName);
     }
     try {
-      Value result = this.value.invokeMember(actionName, params);
+      Value result = this.squeakObject.invokeMember(actionName, params);
       if (operationInfo.getImpact() == MBeanOperationInfo.INFO) {
         return null;
       }

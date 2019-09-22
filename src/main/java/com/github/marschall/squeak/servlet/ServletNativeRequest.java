@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 /**
@@ -190,45 +189,6 @@ public final class ServletNativeRequest {
    */
   private Value getContentsAsValue(Part part) {
     return this.seasideAdaptor.invokeMember("partAsByteArray:", part);
-  }
-
-  private static byte[] getContentsAsByteArray(Part part) throws IOException {
-    long size = part.getSize();
-    if (size > Integer.MAX_VALUE) {
-      throw new IOException("part too large");
-    }
-    byte[] contents = new byte[(int) size];
-    try (InputStream inputStream = part.getInputStream()) {
-      int read = 0;
-      while (read < size) {
-        read += inputStream.read(contents, read, (int) (size - read));
-      }
-    }
-    return contents;
-  }
-  
-  private String getContentsAsString(Part part) throws IOException {
-    long size = part.getSize();
-    if (size > Integer.MAX_VALUE) {
-      throw new IOException("part too large");
-    }
-    if (size == 0L) {
-      return null;
-    }
-    StringBuilder builder = new StringBuilder((int) size);
-    try (InputStream inputStream = part.getInputStream();
-         Reader reader = new InputStreamReader(inputStream, this.request.getCharacterEncoding())) {
-      int bufferSize = Math.min((int) size, 64);
-      // assume most form fields are small
-      char[] buffer = new char[bufferSize];
-      // TODO Java 10 #transferTo
-      int read = reader.read(buffer);
-      while (read != -1) {
-        builder.append(buffer, 0, read);
-        read = reader.read(buffer);
-      }
-    }
-    return builder.toString();
   }
 
   private boolean isMultipartFormData() {

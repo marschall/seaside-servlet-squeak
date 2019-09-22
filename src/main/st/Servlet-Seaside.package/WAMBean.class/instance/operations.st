@@ -1,3 +1,3 @@
 private-jmx
 operations
-	^ nil
+	^ WAMBeanOperationInfoBuilder createFeaturesFrom: self class

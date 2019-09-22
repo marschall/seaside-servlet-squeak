@@ -6,9 +6,14 @@
 		 ],
 	"commentStamp" : "",
 	"instvars" : [
-		 ],
-	"name" : "WAMBean",
+		"name",
+		"type",
+		"description",
+		"readable",
+		"writable",
+		"is" ],
+	"name" : "WAMBeanAttributeInfoBuilder",
 	"pools" : [
 		 ],
-	"super" : "WAObject",
+	"super" : "WAMBeanFeatureInfoBuilder",
 	"type" : "normal" }

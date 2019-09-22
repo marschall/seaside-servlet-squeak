@@ -1,3 +1,3 @@
 private-jmx
 attributes
-	^ nil
+	^ WAMBeanAttributeInfoBuilder createFeaturesFrom: self class

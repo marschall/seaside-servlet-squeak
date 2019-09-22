@@ -6,9 +6,13 @@
 		 ],
 	"commentStamp" : "",
 	"instvars" : [
-		 ],
-	"name" : "WAMBean",
+		"name",
+		"description",
+		"signature",
+		"type",
+		"impact" ],
+	"name" : "WAMBeanOperationInfoBuilder",
 	"pools" : [
 		 ],
-	"super" : "WAObject",
+	"super" : "WAMBeanFeatureInfoBuilder",
 	"type" : "normal" }

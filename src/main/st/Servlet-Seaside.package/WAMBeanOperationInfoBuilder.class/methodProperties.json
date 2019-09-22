@@ -1,0 +1,14 @@
+{
+	"class" : {
+		"name:" : "fn 9/22/2019 15:28",
+		"pragmaKeyword" : "fn 9/22/2019 17:09",
+		"selectorAsName:" : "fn 9/22/2019 17:26" },
+	"instance" : {
+		"create" : "fn 9/22/2019 15:46",
+		"description:" : "fn 9/22/2019 15:37",
+		"impact:" : "fn 9/22/2019 17:45",
+		"initializeWithName:" : "fn 9/22/2019 17:23",
+		"parameterName:type:description:" : "fn 9/22/2019 17:12",
+		"selector:" : "fn 9/22/2019 16:50",
+		"signatureArray" : "fn 9/22/2019 15:46",
+		"type:" : "fn 9/22/2019 15:06" } }

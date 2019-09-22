@@ -1,0 +1,16 @@
+{
+	"class" : {
+		 },
+	"instance" : {
+		"attributes" : "fn 9/22/2019 13:34",
+		"constructors" : "fn 9/22/2019 13:34",
+		"description" : "fn 9/22/2019 13:35",
+		"jmxObjectName" : "fn 9/22/2019 13:07",
+		"newDynamicMBean" : "fn 9/22/2019 13:32",
+		"newMBeanInfo" : "fn 9/22/2019 13:39",
+		"notifications" : "fn 9/22/2019 14:12",
+		"objectName" : "fn 9/22/2019 13:00",
+		"operations" : "fn 9/22/2019 13:35",
+		"platformMBeanServer" : "fn 9/22/2019 13:09",
+		"register" : "fn 9/22/2019 13:12",
+		"unregister" : "fn 9/22/2019 13:11" } }

@@ -1,0 +1,3 @@
+private-jmx
+attributes
+	^ nil

@@ -1,6 +1,7 @@
 {
 	"class" : {
 		"path:encoding:" : "fn 9/7/2019 16:25",
+		"registerMBean" : "fn 9/22/2019 13:53",
 		"stopAllAdapters" : "fn 9/7/2019 16:25" },
 	"instance" : {
 		"basicStart" : "pmm 8/27/2019 17:03",

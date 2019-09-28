@@ -1,0 +1,14 @@
+{
+	"category" : "Servlet-Seaside-MBean",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "WAMBean",
+	"pools" : [
+		 ],
+	"super" : "WAObject",
+	"type" : "normal" }

@@ -1,0 +1,14 @@
+{
+	"category" : "Servlet-Seaside-Adaptor",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "WAAdminMBean",
+	"pools" : [
+		 ],
+	"super" : "WAMBean",
+	"type" : "normal" }

@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.graalvm.polyglot.Value;
+
 /**
  * Object passed to {@code WAServerAdaptor >> #process:}.
  * Can easily be converted to a {@code WARequest} and from a
@@ -30,12 +32,15 @@ public final class ServletNativeRequest {
 
   private final HttpServletRequest request;
   private final HttpServletResponse response;
+  private final Value seasideAdaptor;
 
-  ServletNativeRequest(HttpServletRequest request, HttpServletResponse response) {
+  ServletNativeRequest(HttpServletRequest request, HttpServletResponse response, Value seasideAdaptor) {
     Objects.requireNonNull(request, "request");
     Objects.requireNonNull(response, "response");
+    Objects.requireNonNull(seasideAdaptor, "seasideAdaptor");
     this.request = request;
     this.response = response;
+    this.seasideAdaptor = seasideAdaptor;
   }
 
   // request methods
@@ -161,7 +166,7 @@ public final class ServletNativeRequest {
           // if it is a normal multi part form field
           // it is returned in getRequestFields
           String contentType = part.getContentType();
-          byte[] contents = getContentsAsByteArray(part);
+          Value contents = getContentsAsValue(part);
           formPart = new FilePart(name, fileName, contentType, contents);
           formParts.add(formPart);
         }
@@ -172,44 +177,18 @@ public final class ServletNativeRequest {
       return Collections.emptyList();
     }
   }
-
-  private static byte[] getContentsAsByteArray(Part part) throws IOException {
-    long size = part.getSize();
-    if (size > Integer.MAX_VALUE) {
-      throw new IOException("part too large");
-    }
-    byte[] contents = new byte[(int) size];
-    try (InputStream inputStream = part.getInputStream()) {
-      int read = 0;
-      while (read < size) {
-        read += inputStream.read(contents, read, (int) (size - read));
-      }
-    }
-    return contents;
-  }
   
-  private String getContentsAsString(Part part) throws IOException {
-    long size = part.getSize();
-    if (size > Integer.MAX_VALUE) {
-      throw new IOException("part too large");
-    }
-    if (size == 0L) {
-      return null;
-    }
-    StringBuilder builder = new StringBuilder((int) size);
-    try (InputStream inputStream = part.getInputStream();
-         Reader reader = new InputStreamReader(inputStream, this.request.getCharacterEncoding())) {
-      int bufferSize = Math.min((int) size, 64);
-      // assume most form fields are small
-      char[] buffer = new char[bufferSize];
-      // TODO Java 10 #transferTo
-      int read = reader.read(buffer);
-      while (read != -1) {
-        builder.append(buffer, 0, read);
-        read = reader.read(buffer);
-      }
-    }
-    return builder.toString();
+  /**
+   * Create a Squeak ByteArray from a {@link Part}. Avoid creating a Java
+   * byte[] and copying to a ByteArray.
+   * 
+   * This method has to be invoked from behind the Graal context lock.
+   * 
+   * @param part the part to convert
+   * @return the Squeak ByteArray
+   */
+  private Value getContentsAsValue(Part part) {
+    return this.seasideAdaptor.invokeMember("partAsByteArray:", part);
   }
 
   private boolean isMultipartFormData() {

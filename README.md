@@ -76,3 +76,7 @@ Warm up the compiler
 
 Include the session key to avoid session creation and follow redirects.
 
+Running the image directly with GraalVM
+
+    $JAVA_HOME/bin/graalsqueak --jvm --polyglot src/main/webapp/WEB-INF/squeak/graalsqueak-0.8.4-seaside.image
+

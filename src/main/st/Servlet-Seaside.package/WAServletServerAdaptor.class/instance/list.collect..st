@@ -1,7 +1,7 @@
 private
 list: aJavaList collect: aOneArgumentBlock
 	| collection |
-	collection := OrderedCollection new.
+	collection := OrderedCollection new: aJavaList size.
 	self list: aJavaList do: [ :each |
-		collection add: each ].
+		collection add: (aOneArgumentBlock value: each) ].
 	^ collection

@@ -36,6 +36,9 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   private volatile Value seasideAdaptor;
 
+  /**
+   * Lock through which all access to Squeak objects happens because GraalSqueak is not thread safe.
+   */
   private final Object imageLock = new Object();
 
   @Override
@@ -43,6 +46,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
     this.config = config;
     this.loadSqueakImage();
     this.registerServerAdaptor();
+    this.registerMBean();
   }
 
   @Override
@@ -52,7 +56,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   @Override
   public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
-    dispatchToSeaside((HttpServletRequest) req, (HttpServletResponse) res);
+    this.dispatchToSeaside((HttpServletRequest) req, (HttpServletResponse) res);
   }
 
   @Override
@@ -73,7 +77,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
     if (location == null) {
       throw new ServletException("init parameter: \"" + IMAGE_LOCATION_PARAMETER + "\" missing");
     }
-    return getServletContext().getRealPath(location);
+    return this.getServletContext().getRealPath(location);
   }
 
   private void loadSqueakImage() throws ServletException {
@@ -88,8 +92,14 @@ public class GraalSqueakBridgeServlet implements Servlet {
         .build();
   }
 
+  private void registerMBean() {
+    synchronized (this.imageLock) {
+      this.seasideAdaptor.invokeMember("registerMBeanWithLock:", this.imageLock);
+    }
+  }
+
   private void registerServerAdaptor() throws ServletException {
-    String dispatcherPath = getDispatcherPath();
+    String dispatcherPath = this.getDispatcherPath();
     String encoding = this.getCharacterEncoding();
     this.seasideAdaptor = this.graalContext.eval(LANGUAGE,
         "WAServletServerAdaptor path: '" + dispatcherPath + "' encoding: '" + encoding + "'");
@@ -97,36 +107,36 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   private String getDispatcherPath() throws ServletException {
     ServletContext context = this.getServletContext();
-    String servletMapping = getServletMapping();
+    String servletMapping = this.getServletMapping();
     return context.getContextPath() + servletMapping;
   }
 
   private String getCharacterEncoding() {
     if (this.supportsGetCharacterEncoding()) {
-      return getCharacterEncodingFromContext();
+      return this.getCharacterEncodingFromContext();
     } else {
-      ServletContext context = getServletContext();
+      ServletContext context = this.getServletContext();
       context.log("reading character encoding from context not supported, guessing. use servlet 4.0 if possible");
       return DEFAULT_CHARACTER_ENCODING;
     }
   }
 
   private boolean supportsGetCharacterEncoding() {
-    ServletContext context = getServletContext();
+    ServletContext context = this.getServletContext();
     return context.getMajorVersion() >= 4;
   }
 
   private String getCharacterEncodingFromContext() {
-    ServletContext context = getServletContext();
+    ServletContext context = this.getServletContext();
     String requestCharacterEncoding = context.getRequestCharacterEncoding();
     String responseCharacterEncoding = context.getResponseCharacterEncoding();
-    if (requestCharacterEncoding == null && responseCharacterEncoding == null) {
+    if ((requestCharacterEncoding == null) && (responseCharacterEncoding == null)) {
       // while ISO-8859-1 is what the spec says some servers have other default
       // so we have to guess here
       context.log("no request or response encoding set, falling back to " + DEFAULT_CHARACTER_ENCODING);
       return DEFAULT_CHARACTER_ENCODING;
     }
-    if (requestCharacterEncoding != null && responseCharacterEncoding != null && !requestCharacterEncoding.equals(responseCharacterEncoding)) {
+    if ((requestCharacterEncoding != null) && (responseCharacterEncoding != null) && !requestCharacterEncoding.equals(responseCharacterEncoding)) {
       context.log("inconsistent request and response character encodings " + requestCharacterEncoding + " vs. " + responseCharacterEncoding
           + " falling back to: " + requestCharacterEncoding);
       return requestCharacterEncoding;

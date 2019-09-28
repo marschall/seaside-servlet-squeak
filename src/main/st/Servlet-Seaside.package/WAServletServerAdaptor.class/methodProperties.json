@@ -1,7 +1,6 @@
 {
 	"class" : {
 		"path:encoding:" : "fn 9/7/2019 16:25",
-		"registerMBean" : "fn 9/22/2019 13:53",
 		"stopAllAdapters" : "fn 9/7/2019 16:25" },
 	"instance" : {
 		"basicStart" : "pmm 8/27/2019 17:03",
@@ -12,9 +11,10 @@
 		"isStarting" : "pmm 8/26/2019 16:38",
 		"isStopped" : "pmm 8/26/2019 16:38",
 		"isStopping" : "pmm 8/26/2019 16:38",
-		"list:collect:" : "fn 8/29/2019 09:01",
+		"list:collect:" : "pmm 9/28/2019 23:29",
 		"list:do:" : "fn 9/7/2019 16:18",
 		"partAsByteArray:" : "fn 9/7/2019 16:17",
+		"registerMBeanWithLock:" : "pmm 9/28/2019 20:19",
 		"requestAddressFor:" : "pmm 8/26/2019 17:14",
 		"requestBodyFor:" : "pmm 8/26/2019 17:12",
 		"requestCookiesFor:" : "fn 8/29/2019 11:39",
@@ -23,5 +23,5 @@
 		"requestMethodFor:" : "pmm 8/26/2019 16:46",
 		"requestUrlFor:" : "pmm 8/26/2019 17:05",
 		"requestVersionFor:" : "pmm 8/26/2019 16:52",
-		"responseFrom:" : "fn 8/28/2019 15:46",
+		"responseFrom:" : "pmm 9/28/2019 23:37",
 		"sslSessionIdFor:" : "pmm 8/26/2019 16:48" } }

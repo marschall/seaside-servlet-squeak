@@ -2,9 +2,6 @@ package com.github.marschall.squeak.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,11 +43,11 @@ public final class ServletNativeRequest {
   // request methods
 
   public HttpServletRequest getRequest() {
-    return request;
+    return this.request;
   }
 
   public HttpServletResponse getResponse() {
-    return response;
+    return this.response;
   }
 
   public String getRequestMethod() {
@@ -61,9 +58,9 @@ public final class ServletNativeRequest {
     // not decoded
     StringBuilder builder = new StringBuilder();
 
-    String scheme = request.getScheme();
-    String serverName = request.getServerName();
-    int portNumber = request.getServerPort();
+    String scheme = this.request.getScheme();
+    String serverName = this.request.getServerName();
+    int portNumber = this.request.getServerPort();
     String requestURI = this.request.getRequestURI();
     String queryString = this.request.getQueryString();
 
@@ -78,18 +75,18 @@ public final class ServletNativeRequest {
   }
 
   public String getRequestBodyAsString() throws IOException {
-    if (isFormUrlencoded()) {
+    if (this.isFormUrlencoded()) {
       // if the body is URL encoded and we read it here fully
       // the parameters in the body will be missing from getParameterNames()
       // which is called in getRequestFields() after this method
       return null;
     }
-    if (isMultipartFormData()) {
+    if (this.isMultipartFormData()) {
       // if the body is form data and we read it here fully
       // the parameters in the body will be missing from getServletFiles()
       return null;
     }
-    if (getRequestMethod().equals("GET")) {
+    if (this.getRequestMethod().equals("GET")) {
       // avoid buffer creating on GET
       // TODO generalize
       return null;
@@ -130,7 +127,7 @@ public final class ServletNativeRequest {
     Enumeration<String> headerNames = this.request.getHeaderNames();
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
-      Enumeration<String> headers = request.getHeaders(headerName);
+      Enumeration<String> headers = this.request.getHeaders(headerName);
       result.add(new SimpleImmutableEntry<>(headerName, toList(headers)));
     }
     return result;
@@ -141,7 +138,7 @@ public final class ServletNativeRequest {
     Enumeration<String> parameterNames = this.request.getParameterNames();
     while (parameterNames.hasMoreElements()) {
       String parameterName = parameterNames.nextElement();
-      String[] parameters = request.getParameterValues(parameterName);
+      String[] parameters = this.request.getParameterValues(parameterName);
       List<String> parameterList;
       if (parameters.length > 0) {
         parameterList = Arrays.asList(parameters);
@@ -154,7 +151,7 @@ public final class ServletNativeRequest {
   }
 
   public List<FormPart> getFormParts() throws IOException, ServletException {
-    if (isMultipartFormData()) {
+    if (this.isMultipartFormData()) {
       Collection<Part> parts = this.request.getParts();
       List<FormPart> formParts = new ArrayList<>(parts.size());
       for (Part part : parts) {
@@ -166,7 +163,7 @@ public final class ServletNativeRequest {
           // if it is a normal multi part form field
           // it is returned in getRequestFields
           String contentType = part.getContentType();
-          Value contents = getContentsAsValue(part);
+          Value contents = this.getContentsAsValue(part);
           formPart = new FilePart(name, fileName, contentType, contents);
           formParts.add(formPart);
         }
@@ -177,13 +174,13 @@ public final class ServletNativeRequest {
       return Collections.emptyList();
     }
   }
-  
+
   /**
    * Create a Squeak ByteArray from a {@link Part}. Avoid creating a Java
    * byte[] and copying to a ByteArray.
-   * 
+   *
    * This method has to be invoked from behind the Graal context lock.
-   * 
+   *
    * @param part the part to convert
    * @return the Squeak ByteArray
    */

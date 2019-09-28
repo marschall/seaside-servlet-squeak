@@ -79,6 +79,8 @@ public final class SqueakObjectMBean implements DynamicMBean {
         return value.asInt();
       case "boolean":
         return value.asBoolean();
+      case "void":
+        return null;
       default:
         throw new ReflectionException(new IllegalArgumentException("unknown type: " + type));
     }

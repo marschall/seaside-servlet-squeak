@@ -1,11 +1,8 @@
 package com.github.marschall.squeak.servlet;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 
 import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.graalvm.polyglot.Context;
 

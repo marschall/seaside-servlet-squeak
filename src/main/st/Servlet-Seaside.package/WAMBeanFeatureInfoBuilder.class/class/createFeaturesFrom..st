@@ -12,6 +12,8 @@ createFeaturesFrom: aClass
 			featureBuilder selector: selector.
 			method pragmas do: [ :pragma |
 				(configuration includes: pragma keyword) ifTrue: [
-					featureBuilder perform: pragma keyword withArguments: pragma arguments ]  ] ] ].
-	^ (featureBuilders values collect: [ :builder |
-		builder create ]) asArray
+					featureBuilder perform: pragma keyword withArguments: pragma arguments ] ] ] ].
+	^ WAJavaSupport
+		collect: featureBuilders values 
+		with: [ :builder | builder create ]
+		intoArray: self javaClassName

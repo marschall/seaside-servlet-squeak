@@ -1,6 +1,8 @@
 package com.github.marschall.squeak.servlet;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import javax.servlet.Servlet;
@@ -26,9 +28,9 @@ public class GraalSqueakBridgeServlet implements Servlet {
    */
   private static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 
-  private static final String IMAGE_LOCATION_PARAMETER = "squeak.image.location";
+  private static final String LANGUAGE = "smalltalk";
 
-  private static final String LANGUAGE = "squeaksmalltalk";
+  private static final String IMAGE_LOCATION_PARAMETER = LANGUAGE + ".ImagePath";
 
   private volatile ServletConfig config;
 
@@ -77,12 +79,16 @@ public class GraalSqueakBridgeServlet implements Servlet {
     if (location == null) {
       throw new ServletException("init parameter: \"" + IMAGE_LOCATION_PARAMETER + "\" missing");
     }
-    return this.getServletContext().getRealPath(location);
+    String imageLocation = this.getServletContext().getRealPath(location);
+    if (!Files.exists(Paths.get(imageLocation))) {
+      throw new ServletException("image path: " + imageLocation + " does not exist");
+    }
+    return imageLocation;
   }
 
   private void loadSqueakImage() throws ServletException {
     this.graalContext = Context.newBuilder()
-        .option(LANGUAGE + ".ImagePath", this.getImageLocation())
+        .option(IMAGE_LOCATION_PARAMETER, this.getImageLocation())
         .allowAllAccess(true)
         //.allowPolyglotAccess(PolyglotAccess.ALL)
         //.allowNativeAccess(true)

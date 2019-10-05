@@ -1,0 +1,3 @@
+private
+javaClassName
+	self subclassResponsibility

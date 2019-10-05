@@ -25,8 +25,8 @@ Add the servlet to your `web.xml`
   <servlet-name>GraalSqueakBridgeServlet</servlet-name>
   <servlet-class>com.github.marschall.squeak.servlet.GraalSqueakBridgeServlet</servlet-class>
   <init-param>
-    <param-name>squeak.image.location</param-name>
-    <param-value>/WEB-INF/squeak/graalsqueak-0.8.4-seaside.image</param-value>
+    <param-name>smalltalk.ImagePath</param-name>
+    <param-value>/WEB-INF/squeak/graalsqueak-1.0.0-rc2-seaside.image</param-value>
   </init-param>
   <async-supported>false</async-supported>
 </servlet>
@@ -36,6 +36,9 @@ Add the servlet to your `web.xml`
   <url-pattern>/*</url-pattern>
 </servlet-mapping>
 ```
+
+* load `Servlet-Seaside` from this repository
+* stop `WAWebServerAdaptor` as it fails during startup on GraalSqueak
 
 And run with Graal VM.
 
@@ -48,9 +51,9 @@ Have a look at [marschall/squeak-servlet-demo](https://github.com/marschall/sque
 Requirements
 ------------
 
- * GraalVM 19.0.0
+ * GraalVM 19.2.0.1
  * GraalSqueak
-  * `gu install -u https://www.hpi.uni-potsdam.de/hirschfeld/artefacts/graalsqueak/graalsqueak-component-0.8.4-for-19.0.0.jar`
+  * `gu install -u https://github.com/hpi-swa/graalsqueak/releases/download/1.0.0-rc2/graalsqueak-component-1.0.0-rc2-for-GraalVM-19.2.0.1.jar`
  * Servlet 3.1, but Servlet 4.0 is recommended
 
 Limitations
@@ -61,7 +64,8 @@ Limitations
   * Continuations are not supported.
   * High memory consumption and allocation rate compared to OpenSmalltalk VM
   * stack traces currently are not very useful
-* Initial performance is not good compared to GraalSqueak. At this point it is unclear how fast it would ultimately be once the optimizations stabilize.
+* Initial performance is not good compared to OpenSmalltalk VM.
+* Asynchronous web request processing is not supported.
 
 Tips & Tricks
 -------------
@@ -78,5 +82,5 @@ Include the session key to avoid session creation and follow redirects.
 
 Running the image directly with GraalVM
 
-    $JAVA_HOME/bin/graalsqueak --jvm --polyglot src/main/webapp/WEB-INF/squeak/graalsqueak-0.8.4-seaside.image
+    $JAVA_HOME/bin/graalsqueak --jvm --polyglot src/main/webapp/WEB-INF/squeak/graalsqueak-1.0.0-rc2-seaside.image
 

@@ -1,0 +1,14 @@
+{
+	"category" : "Servlet-Seaside-Core",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "WAJavaSupport",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

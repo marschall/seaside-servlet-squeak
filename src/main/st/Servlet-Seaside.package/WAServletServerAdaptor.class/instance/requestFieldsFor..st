@@ -4,13 +4,13 @@ requestFieldsFor: aNativeRequest
 	fields := WARequestFields new.
 
 
-	self list: aNativeRequest getRequestFields do: [ :entry |
+	WAJavaSupport list: aNativeRequest getRequestFields do: [ :entry |
 		| fieldName |
 		fieldName := entry getKey.
 		self list: entry getValue do: [ :fieldValue |
 			fields at: fieldName add: fieldValue ] ].
 
-	self list: aNativeRequest getFormParts do: [ :each |
+	WAJavaSupport list: aNativeRequest getFormParts do: [ :each |
 		| part |
 		part := each isFile
 			ifTrue: [

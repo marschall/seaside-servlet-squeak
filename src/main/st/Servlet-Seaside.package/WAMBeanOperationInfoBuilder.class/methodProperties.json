@@ -1,5 +1,7 @@
 {
 	"class" : {
+		"initialize" : "pmm 10/1/2019 21:26",
+		"javaClassName" : "pmm 10/5/2019 19:21",
 		"name:" : "fn 9/22/2019 15:28",
 		"pragmaKeyword" : "fn 9/22/2019 17:09",
 		"selectorAsName:" : "fn 9/22/2019 17:26" },
@@ -10,5 +12,5 @@
 		"initializeWithName:" : "fn 9/22/2019 17:23",
 		"parameterName:type:description:" : "fn 9/22/2019 17:12",
 		"selector:" : "fn 9/22/2019 16:50",
-		"signatureArray" : "fn 9/22/2019 15:46",
+		"signatureArray" : "pmm 10/5/2019 19:06",
 		"type:" : "fn 9/22/2019 15:06" } }

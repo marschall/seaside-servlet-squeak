@@ -1,3 +1,3 @@
 public
 registerMBeanWithLock: anObject
-	WAAdminMBean new registerWithLock: anObject
+	^ WAAdminMBean new registerWithLock: anObject

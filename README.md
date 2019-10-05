@@ -40,7 +40,7 @@ Add the servlet to your `web.xml`
 * load `Servlet-Seaside` from this repository
 * stop `WAWebServerAdaptor` as it fails during startup on GraalSqueak
 
-And run with Graal VM.
+And run with GraalVM.
 
 Make sure you explode WARs for Tomcat, this means having `unpackWARs="unpackWARs"` on the `<Host>` element of `server.xml`. See [Tomcat Web Application Deployment](https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html).
 
@@ -61,10 +61,11 @@ Limitations
 
 * Limitations inherited from GraalSqueak
   * As GraalSqueak is currently not thread safe we are limited to one concurrent request. This is especially damning in case of blocking IO like database access.
+  * Stack traces currently are not very useful.
   * Continuations are not supported.
-  * High memory consumption and allocation rate compared to OpenSmalltalk VM
-  * stack traces currently are not very useful
-* Initial performance is not good compared to OpenSmalltalk VM.
+  * Initial performance before warm up is not good compared to OpenSmalltalk VM.
+  * Startup is not good compared to OpenSmalltalk VM.
+  * Memory consumption and allocation rate are higher compared to OpenSmalltalk VM
 * Asynchronous web request processing is not supported.
 
 Tips & Tricks
@@ -76,7 +77,7 @@ Enable Graal compliation logging
 
 Warm up the compiler
 
-    for run in {1..10}; do curl -L 'http://127.0.0.1:8080/tests/functional/WALotsaLinksFunctionalTest?_s=_eYKKM3Gl3XzVM5T&_k=JIp_6FO_QQ26nQob' > /dev/null; done
+    for run in {1..100}; do curl -L 'http://127.0.0.1:8080/tests/functional/WALotsaLinksFunctionalTest?_s=_eYKKM3Gl3XzVM5T&_k=JIp_6FO_QQ26nQob' > /dev/null; done
 
 Include the session key to avoid session creation and follow redirects.
 

@@ -39,6 +39,11 @@ public class GraalSqueakBridgeServlet implements Servlet {
   private volatile Value seasideAdaptor;
 
   /**
+   * Instance of WAMBean, {@code nil} if already registered.
+   */
+  private volatile Value waMBean;
+
+  /**
    * Lock through which all access to Squeak objects happens because GraalSqueak is not thread safe.
    */
   private final Object imageLock = new Object();
@@ -68,6 +73,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   @Override
   public void destroy() {
+    this.unregisterMBean();
     this.stopSqueakImage();
     this.config = null;
   }
@@ -100,7 +106,7 @@ public class GraalSqueakBridgeServlet implements Servlet {
 
   private void registerMBean() {
     synchronized (this.imageLock) {
-      this.seasideAdaptor.invokeMember("registerMBeanWithLock:", this.imageLock);
+      this.waMBean = this.seasideAdaptor.invokeMember("registerMBeanWithLock:", this.imageLock);
     }
   }
 
@@ -136,13 +142,13 @@ public class GraalSqueakBridgeServlet implements Servlet {
     ServletContext context = this.getServletContext();
     String requestCharacterEncoding = context.getRequestCharacterEncoding();
     String responseCharacterEncoding = context.getResponseCharacterEncoding();
-    if ((requestCharacterEncoding == null) && (responseCharacterEncoding == null)) {
+    if (requestCharacterEncoding == null && responseCharacterEncoding == null) {
       // while ISO-8859-1 is what the spec says some servers have other default
       // so we have to guess here
       context.log("no request or response encoding set, falling back to " + DEFAULT_CHARACTER_ENCODING);
       return DEFAULT_CHARACTER_ENCODING;
     }
-    if ((requestCharacterEncoding != null) && (responseCharacterEncoding != null) && !requestCharacterEncoding.equals(responseCharacterEncoding)) {
+    if (requestCharacterEncoding != null && responseCharacterEncoding != null && !requestCharacterEncoding.equals(responseCharacterEncoding)) {
       context.log("inconsistent request and response character encodings " + requestCharacterEncoding + " vs. " + responseCharacterEncoding
           + " falling back to: " + requestCharacterEncoding);
       return requestCharacterEncoding;
@@ -188,9 +194,21 @@ public class GraalSqueakBridgeServlet implements Servlet {
     }
   }
 
+  private void unregisterMBean() {
+    synchronized (this.imageLock) {
+      if (this.waMBean != null && !this.waMBean.isNull()) {
+        this.waMBean.invokeMember("unregister");
+      }
+      this.waMBean = null;
+    }
+  }
+
   private void stopSqueakImage() {
-    this.graalContext.close();
+    synchronized (this.imageLock) {
+      this.graalContext.close();
+    }
     this.graalContext = null;
+    this.waMBean = null;
     this.seasideAdaptor = null;
   }
 

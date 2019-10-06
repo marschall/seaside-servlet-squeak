@@ -5,14 +5,14 @@
   <artifactId>seaside-servlet-squeak</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <inceptionYear>2019</inceptionYear>
-  <name>Squeak Servlet</name>
+  <name>Seaside Servlet Bridge for Squeak</name>
   <description>Runs a Squeak Seaside image in a servlet.</description>
 
-  <url>https://github.com/marschall/squeak-servlet</url>
+  <url>https://github.com/marschall/seaside-servlet-squeak</url>
 
   <scm>
-    <connection>scm:git:git@github.com:marschall/squeak-servlet.git</connection>
-    <developerConnection>scm:git:git@github.com:marschall/squeak-servlet.git</developerConnection>
+    <connection>scm:git:git@github.com:marschall/seaside-servlet-squeak.git</connection>
+    <developerConnection>scm:git:git@github.com:marschall/seaside-servlet-squeak.git</developerConnection>
     <url>${project.url}</url>
     <tag>HEAD</tag>
   </scm>

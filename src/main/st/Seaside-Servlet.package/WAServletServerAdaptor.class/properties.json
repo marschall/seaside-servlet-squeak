@@ -1,0 +1,14 @@
+{
+	"category" : "Seaside-Servlet-Squeak-Adaptor",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "pmm 8/26/2019 16:38",
+	"instvars" : [
+		 ],
+	"name" : "WAServletServerAdaptor",
+	"pools" : [
+		 ],
+	"super" : "WAServerAdaptor",
+	"type" : "normal" }

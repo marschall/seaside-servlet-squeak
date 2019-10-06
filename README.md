@@ -1,5 +1,5 @@
-Squeak Seaside Servlet Bridge
-=============================
+Seaside Servlet Bridge for Squeak
+=================================
 
 Run [Seaside](http://www.seaside.st) in a Servlet container using [GraalSqueak](https://github.com/hpi-swa/graalsqueak).
 
@@ -22,8 +22,8 @@ Add the servlet to your `web.xml`
 
 ```xml
 <servlet>
-  <servlet-name>GraalSqueakBridgeServlet</servlet-name>
-  <servlet-class>com.github.marschall.squeak.servlet.GraalSqueakBridgeServlet</servlet-class>
+  <servlet-name>SeasideGraalSqueakBridgeServlet</servlet-name>
+  <servlet-class>com.github.marschall.seaside.servlet.squeak.SeasideGraalSqueakBridgeServlet</servlet-class>
   <init-param>
     <param-name>smalltalk.ImagePath</param-name>
     <param-value>/WEB-INF/squeak/graalsqueak-1.0.0-rc2-seaside.image</param-value>
@@ -32,7 +32,7 @@ Add the servlet to your `web.xml`
 </servlet>
 
 <servlet-mapping>
-  <servlet-name>GraalSqueakBridgeServlet</servlet-name>
+  <servlet-name>SeasideGraalSqueakBridgeServlet</servlet-name>
   <url-pattern>/*</url-pattern>
 </servlet-mapping>
 ```
@@ -46,7 +46,7 @@ Make sure you explode WARs for Tomcat, this means having `unpackWARs="unpackWARs
 
 Make sure you have GraalSqueak installed in GraalVM.
 
-Have a look at [marschall/squeak-servlet-demo](https://github.com/marschall/squeak-servlet-demo) for a complete demo project.
+Have a look at [marschall/seaside-servlet-squeak-demo](https://github.com/marschall/seaside-servlet-squeak-demo) for a complete demo project.
 
 Requirements
 ------------

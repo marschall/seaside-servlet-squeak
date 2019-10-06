@@ -1,0 +1,15 @@
+{
+	"category" : "Seaside-Servlet-Squeak-Adaptor",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "fn 8/29/2019 10:20",
+	"instvars" : [
+		"contextPath",
+		"requestHandler" ],
+	"name" : "WAContextPathHandler",
+	"pools" : [
+		 ],
+	"super" : "WARequestHandler",
+	"type" : "normal" }

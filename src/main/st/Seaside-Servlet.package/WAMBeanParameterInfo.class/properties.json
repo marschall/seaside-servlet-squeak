@@ -1,0 +1,16 @@
+{
+	"category" : "Seaside-Servlet-Squeak-MBean",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		"name",
+		"type",
+		"description" ],
+	"name" : "WAMBeanParameterInfo",
+	"pools" : [
+		 ],
+	"super" : "WAObject",
+	"type" : "normal" }

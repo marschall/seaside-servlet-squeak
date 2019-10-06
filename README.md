@@ -12,7 +12,7 @@ Add the dependency to your project
 ```xml
 <dependency>
   <groupId>com.github.marschall</groupId>
-  <artifactId>squeak-servlet</artifactId>
+  <artifactId>seaside-servlet-squeak</artifactId>
   <version>0.1.0</version>
 </dependency>
 ```

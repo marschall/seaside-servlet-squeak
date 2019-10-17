@@ -13,7 +13,7 @@ public class MBeanTest {
   private static final String LANGUAGE = "smalltalk";
 
   public static void main(String[] args) throws JMException, IOException {
-    String imagePath = Paths.get("../squeak-servlet-demo/src/main/webapp/WEB-INF/squeak/Squeak5.3alpha-19006-64bit.image").toAbsolutePath().toString();
+    String imagePath = Paths.get("../squeak-servlet-demo/src/main/webapp/WEB-INF/squeak/graalsqueak-1.0.0-rc2-seaside.image").toAbsolutePath().toString();
     Context graalContext = Context.newBuilder()
         .option(LANGUAGE + ".ImagePath", imagePath)
         .allowAllAccess(true)

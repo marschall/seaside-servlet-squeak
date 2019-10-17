@@ -14,15 +14,7 @@ responseFrom: aRequestContext
 	"cookies"
 	seasideResponse cookies do: [ :seasideCookie |
 		| servletCookie |
-		servletCookie := nativeRequest newCookie: seasideCookie key _: seasideCookie value.
-		servletCookie setVersion: seasideCookie version.
-		seasideCookie comment ifNotNilDo: [ :comment | servletCookie setComment: comment ].
-		seasideCookie domain ifNotNilDo: [ :domain | servletCookie setDomain: domain ].
-		"GraalSqueak bug calling int methods"
-		"servletCookie setMaxAge: seasideCookie maxAge."
-		servletCookie setPath: seasideCookie path.
-		servletCookie setSecure: seasideCookie secure.
-		servletCookie setHttpOnly: seasideCookie httpOnly.
+		servletCookie := self toServletCookie: seasideCookie fromRequest: nativeRequest.
 		nativeRequest addCookie: servletCookie ].
 	
 	"body"

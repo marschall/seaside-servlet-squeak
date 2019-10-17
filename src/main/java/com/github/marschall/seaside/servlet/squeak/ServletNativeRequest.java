@@ -134,45 +134,52 @@ public final class ServletNativeRequest {
   }
 
   public List<Entry<String, List<String>>> getRequestFields() {
+    if (this.request.getMethod().equals("GET")) {
+      // URL parameters are returned for a GET, Seaside doesn't expect this
+      return Collections.emptyList();
+    }
+
     List<Entry<String, List<String>>> result = new ArrayList<>();
     Enumeration<String> parameterNames = this.request.getParameterNames();
     while (parameterNames.hasMoreElements()) {
       String parameterName = parameterNames.nextElement();
       String[] parameters = this.request.getParameterValues(parameterName);
       List<String> parameterList;
-      if (parameters.length > 0) {
-        parameterList = Arrays.asList(parameters);
-      } else {
+      if (parameters.length== 0) {
         parameterList = Collections.emptyList();
+      } else if (parameters.length == 1) {
+        parameterList = Collections.singletonList(parameters[0]);
+      } else {
+        parameterList = Arrays.asList(parameters);
       }
-      result.add(new SimpleImmutableEntry<>(parameterName, parameterList ));
+      result.add(new SimpleImmutableEntry<>(parameterName, parameterList));
     }
     return result;
   }
 
   public List<FormPart> getFormParts() throws IOException, ServletException {
-    if (this.isMultipartFormData()) {
-      Collection<Part> parts = this.request.getParts();
-      List<FormPart> formParts = new ArrayList<>(parts.size());
-      for (Part part : parts) {
-        String name = part.getName();
-        String fileName = part.getSubmittedFileName();
-        FormPart formPart;
-        if (fileName != null) {
-          // only if there is a file name it's a file
-          // if it is a normal multi part form field
-          // it is returned in getRequestFields
-          String contentType = part.getContentType();
-          Value contents = this.getContentsAsValue(part);
-          formPart = new FilePart(name, fileName, contentType, contents);
-          formParts.add(formPart);
-        }
-        part.delete();
-      }
-      return formParts;
-    } else {
+    if (!this.isMultipartFormData()) {
       return Collections.emptyList();
     }
+
+    Collection<Part> parts = this.request.getParts();
+    List<FormPart> formParts = new ArrayList<>(parts.size());
+    for (Part part : parts) {
+      String name = part.getName();
+      String fileName = part.getSubmittedFileName();
+      FormPart formPart;
+      if (fileName != null) {
+        // only if there is a file name it's a file
+        // if it is a normal multi part form field
+        // it is returned in getRequestFields
+        String contentType = part.getContentType();
+        Value contents = this.getContentsAsValue(part);
+        formPart = new FilePart(name, fileName, contentType, contents);
+        formParts.add(formPart);
+      }
+      part.delete();
+    }
+    return formParts;
   }
 
   /**
@@ -216,10 +223,8 @@ public final class ServletNativeRequest {
 
   // response methods
 
-  public void setResponseStatus(long status /* should be int but is bug in GraalSqueak */, String message) {
-    // TODO message
-    // TODO GraalSqueak bug
-    this.response.setStatus(Math.toIntExact(status));
+  public void setResponseStatus(int status, String message) {
+    this.response.setStatus(status);
   }
 
   public void addHeader(String key, String value) {

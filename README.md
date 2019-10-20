@@ -3,7 +3,6 @@ Seaside Servlet Bridge for Squeak
 
 Run [Seaside](http://www.seaside.st) in a Servlet container using [GraalSqueak](https://github.com/hpi-swa/graalsqueak).
 
-
 Usage
 -----
 
@@ -35,6 +34,18 @@ Add the servlet to your `web.xml`
   <servlet-name>SeasideGraalSqueakBridgeServlet</servlet-name>
   <url-pattern>/*</url-pattern>
 </servlet-mapping>
+```
+
+* load GraalSqueak-Core
+* load Seaside
+
+
+```
+Installer ensureRecentMetacello. 
+Metacello new
+ baseline:'Seaside3';
+ repository: 'github://SeasideSt/Seaside:develop/repository';
+ load
 ```
 
 * load `Servlet-Seaside` from this repository

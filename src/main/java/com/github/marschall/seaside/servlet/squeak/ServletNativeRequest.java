@@ -243,8 +243,13 @@ public final class ServletNativeRequest {
     this.response.getWriter().append(contents);
   }
 
-  public void setResponseContentsAsByteArray(byte[] contents) throws IOException {
-    this.response.getOutputStream().write(contents);
+  public void setResponseContentsAsByteArray(Value contents) throws IOException {
+    int arraySize = Math.toIntExact(contents.getArraySize());
+    byte[] value = new byte[arraySize];
+    for (int i = 0; i < arraySize; i++) {
+      value[i] = (byte) contents.getArrayElement(i).asInt();
+    }
+    this.response.getOutputStream().write(value);
   }
 
 }

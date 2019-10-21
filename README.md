@@ -86,6 +86,10 @@ Enable Graal compliation logging
 
     export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
 
+To make WAUrlDecodingFunctionalTest pass use, this is not needed in general
+
+    export CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+
 Warm up the compiler
 
     for run in {1..100}; do curl -L 'http://127.0.0.1:8080/tests/functional/WALotsaLinksFunctionalTest?_s=_eYKKM3Gl3XzVM5T&_k=JIp_6FO_QQ26nQob' > /dev/null; done

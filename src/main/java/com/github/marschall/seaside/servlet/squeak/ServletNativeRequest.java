@@ -244,6 +244,7 @@ public final class ServletNativeRequest {
   }
 
   public void setResponseContentsAsByteArray(Value contents) throws IOException {
+    // TODO fixed in RC4
     int arraySize = Math.toIntExact(contents.getArraySize());
     byte[] value = new byte[arraySize];
     for (int i = 0; i < arraySize; i++) {

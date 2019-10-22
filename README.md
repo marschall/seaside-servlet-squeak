@@ -79,6 +79,16 @@ Limitations
   * Memory consumption and allocation rate are higher compared to OpenSmalltalk VM
 * Asynchronous web request processing is not supported.
 
+JMX
+---
+
+Included is a small framework to register Squeak objects as MBeans. To create a custom one:
+
+* sublcass `WAMBean`
+* override `#objectName`, check out the [ObjectName](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/javax/management/ObjectName.html) class comment for information about the syntax
+* add methods with `<attribute>` and `<operation>` pragmas
+* have a look at `WAAdminMBean` for an example
+
 Tips & Tricks
 -------------
 
@@ -89,6 +99,8 @@ Enable Graal compliation logging
 To make WAUrlDecodingFunctionalTest pass use, this is not needed in general
 
     export CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+
+If you have the Tomcat examples application installed (per default) this overrides the Seaside examples.
 
 Warm up the compiler
 

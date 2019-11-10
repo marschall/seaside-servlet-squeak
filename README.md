@@ -85,3 +85,5 @@ Running the image directly with GraalVM
 
     $JAVA_HOME/bin/graalsqueak --jvm --polyglot src/main/webapp/WEB-INF/squeak/graalsqueak-1.0.0-rc2-seaside.image
 
+Building a native Tomcat image https://ci.apache.org/projects/tomcat/tomcat9/docs/graal.html
+

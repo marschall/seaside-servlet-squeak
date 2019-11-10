@@ -3,7 +3,6 @@ Seaside Servlet Bridge for Squeak
 
 Run [Seaside](http://www.seaside.st) in a Servlet container using [GraalSqueak](https://github.com/hpi-swa/graalsqueak).
 
-
 Usage
 -----
 
@@ -37,6 +36,18 @@ Add the servlet to your `web.xml`
 </servlet-mapping>
 ```
 
+* load GraalSqueak-Core
+* load Seaside
+
+
+```
+Installer ensureRecentMetacello. 
+Metacello new
+ baseline:'Seaside3';
+ repository: 'github://SeasideSt/Seaside:develop/repository';
+ load
+```
+
 * load `Servlet-Seaside` from this repository
 * stop `WAWebServerAdaptor` as it fails during startup on GraalSqueak
 
@@ -68,12 +79,28 @@ Limitations
   * Memory consumption and allocation rate are higher compared to OpenSmalltalk VM
 * Asynchronous web request processing is not supported.
 
+JMX
+---
+
+Included is a small framework to register Squeak objects as MBeans. To create a custom one:
+
+* sublcass `WAMBean`
+* override `#objectName`, check out the [ObjectName](https://docs.oracle.com/en/java/javase/11/docs/api/java.management/javax/management/ObjectName.html) class comment for information about the syntax
+* add methods with `<attribute>` and `<operation>` pragmas
+* have a look at `WAAdminMBean` for an example
+
 Tips & Tricks
 -------------
 
 Enable Graal compliation logging
 
     export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
+
+To make WAUrlDecodingFunctionalTest pass use, this is not needed in general
+
+    export CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+
+If you have the Tomcat examples application installed (per default) this overrides the Seaside examples.
 
 Warm up the compiler
 

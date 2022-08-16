@@ -1,7 +1,7 @@
 Seaside Servlet Bridge for Squeak
 =================================
 
-Run [Seaside](http://www.seaside.st) in a Servlet container using [GraalSqueak](https://github.com/hpi-swa/graalsqueak).
+Run [Seaside](http://www.seaside.st) in a Servlet container using [TruffleSqueak](https://github.com/hpi-swa/trufflesqueak).
 
 Usage
 -----
@@ -49,29 +49,29 @@ Metacello new
 ```
 
 * load `Servlet-Seaside` from this repository
-* stop `WAWebServerAdaptor` as it fails during startup on GraalSqueak
+* stop `WAWebServerAdaptor` as it fails during startup on TruffleSqueak
 
 And run with GraalVM.
 
-Make sure you explode WARs for Tomcat, this means having `unpackWARs="unpackWARs"` on the `<Host>` element of `server.xml`. See [Tomcat Web Application Deployment](https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html).
+Make sure you explode WARs for Tomcat, this means having `unpackWARs="true"` on the `<Host>` element of `server.xml`. See [Tomcat Web Application Deployment](https://tomcat.apache.org/tomcat-9.0-doc/deployer-howto.html).
 
-Make sure you have GraalSqueak installed in GraalVM.
+Make sure you have TruffleSqueak installed in GraalVM.
 
 Have a look at [marschall/seaside-servlet-squeak-demo](https://github.com/marschall/seaside-servlet-squeak-demo) for a complete demo project.
 
 Requirements
 ------------
 
- * GraalVM 19.2.0.1
- * GraalSqueak
+ * GraalVM 22.2
+ * TruffleSqueak
   * `gu install -u https://github.com/hpi-swa/graalsqueak/releases/download/1.0.0-rc2/graalsqueak-component-1.0.0-rc2-for-GraalVM-19.2.0.1.jar`
- * Servlet 3.1, but Servlet 4.0 is recommended
+ * Jakarka Servlet 5
 
 Limitations
 -----------
 
-* Limitations inherited from GraalSqueak
-  * As GraalSqueak is currently not thread safe we are limited to one concurrent request. This is especially damning in case of blocking IO like database access.
+* Limitations inherited from TruffleSqueak
+  * As TruffleSqueak is currently not thread safe we are limited to one concurrent request. This is especially damning in case of blocking IO like database access.
   * Stack traces currently are not very useful.
   * Continuations are not supported.
   * Initial performance before warm up is not good compared to OpenSmalltalk VM.
@@ -92,7 +92,7 @@ Included is a small framework to register Squeak objects as MBeans. To create a 
 Tips & Tricks
 -------------
 
-Enable Graal compliation logging
+Enable Graal compilation logging
 
     export CATALINA_OPTS="-Dgraal.TraceTruffleCompilation=true"
 

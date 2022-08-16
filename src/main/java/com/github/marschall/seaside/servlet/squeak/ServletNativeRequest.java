@@ -2,13 +2,12 @@ package com.github.marschall.seaside.servlet.squeak;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -91,16 +90,10 @@ public final class ServletNativeRequest {
       // TODO generalize
       return null;
     }
-    StringBuilder builder = new StringBuilder();
     // TODO read request size
-    char[] buffer = new char[8192];
+    StringBuilderWriter builder = new StringBuilderWriter();
     try (BufferedReader reader = this.request.getReader()) {
-      // TODO Java 10 #transferTo
-      int read = reader.read(buffer);
-      while (read != -1) {
-        builder.append(buffer, 0, read);
-        read = reader.read(buffer);
-      }
+      reader.transferTo(builder);
     }
     return builder.toString();
   }
@@ -116,8 +109,9 @@ public final class ServletNativeRequest {
   public List<Cookie> getCookies() {
     Cookie[] cookies = this.request.getCookies();
     if (cookies == null) {
-      return Collections.emptyList();
+      return List.of();
     } else {
+      // avoids the copy of List.of
       return Arrays.asList(cookies);
     }
   }
@@ -128,7 +122,7 @@ public final class ServletNativeRequest {
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
       Enumeration<String> headers = this.request.getHeaders(headerName);
-      result.add(new SimpleImmutableEntry<>(headerName, toList(headers)));
+      result.add(Map.entry(headerName, toList(headers)));
     }
     return result;
   }
@@ -136,7 +130,7 @@ public final class ServletNativeRequest {
   public List<Entry<String, List<String>>> getRequestFields() {
     if (this.request.getMethod().equals("GET")) {
       // URL parameters are returned for a GET, Seaside doesn't expect this
-      return Collections.emptyList();
+      return List.of();
     }
 
     List<Entry<String, List<String>>> result = new ArrayList<>();
@@ -146,20 +140,20 @@ public final class ServletNativeRequest {
       String[] parameters = this.request.getParameterValues(parameterName);
       List<String> parameterList;
       if (parameters.length== 0) {
-        parameterList = Collections.emptyList();
+        parameterList = List.of();
       } else if (parameters.length == 1) {
-        parameterList = Collections.singletonList(parameters[0]);
+        parameterList = List.of(parameters[0]);
       } else {
         parameterList = Arrays.asList(parameters);
       }
-      result.add(new SimpleImmutableEntry<>(parameterName, parameterList));
+      result.add(Map.entry(parameterName, parameterList));
     }
     return result;
   }
 
   public List<FormPart> getFormParts() throws IOException, ServletException {
     if (!this.isMultipartFormData()) {
-      return Collections.emptyList();
+      return List.of();
     }
 
     Collection<Part> parts = this.request.getParts();

@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toMap;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -32,7 +33,7 @@ public final class SqueakObjectMBean implements DynamicMBean {
   /**
    * Lock through which all access to Squeak objects happens because GraalSqueak is not thread safe.
    */
-  private final Object lock;
+  private final Lock lock;
   private final MBeanInfo mBeanInfo;
   private final Map<String, MBeanAttributeInfo> attributes;
   private final Map<String, MBeanOperationInfo> operations;
@@ -69,8 +70,11 @@ public final class SqueakObjectMBean implements DynamicMBean {
   public Object getAttribute(String attributeName)
           throws AttributeNotFoundException, MBeanException, ReflectionException {
 
-    synchronized (this.lock) {
+    this.lock.lock();
+    try {
       return this.doGetAttributeValue(attributeName);
+    } finally {
+      this.lock.unlock();
     }
   }
 
@@ -78,22 +82,33 @@ public final class SqueakObjectMBean implements DynamicMBean {
   public void setAttribute(Attribute attribute)
       throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
 
-    synchronized (this.lock) {
+    this.lock.lock();
+    try {
       this.doSetAttribute(attribute);
+    } finally {
+      this.lock.unlock();
     }
   }
 
   @Override
   public AttributeList getAttributes(String[] attributeNames) {
-    synchronized (this.lock) {
+
+    this.lock.lock();
+    try {
       return this.getGetAttributes(attributeNames);
+    } finally {
+      this.lock.unlock();
     }
   }
 
   @Override
   public AttributeList setAttributes(AttributeList attributes) {
-    synchronized (this.lock) {
+
+    this.lock.lock();
+    try {
       return this.doSetAttributes(attributes);
+    } finally {
+      this.lock.unlock();
     }
   }
 
@@ -101,8 +116,11 @@ public final class SqueakObjectMBean implements DynamicMBean {
   public Object invoke(String actionName, Object[] params, String[] signature)
       throws MBeanException, ReflectionException {
 
-    synchronized (this.lock) {
+    this.lock.lock();
+    try {
       return this.doInvoke(actionName, params);
+    } finally {
+      this.lock.unlock();
     }
   }
 

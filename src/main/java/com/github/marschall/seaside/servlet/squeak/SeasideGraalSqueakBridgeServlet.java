@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
@@ -46,7 +48,7 @@ public class SeasideGraalSqueakBridgeServlet implements Servlet {
   /**
    * Lock through which all access to Squeak objects happens because GraalSqueak is not thread safe.
    */
-  private final Object imageLock = new Object();
+  private final Lock imageLock = new ReentrantLock();
 
   @Override
   public void init(ServletConfig config) throws ServletException {
@@ -105,8 +107,11 @@ public class SeasideGraalSqueakBridgeServlet implements Servlet {
   }
 
   private void registerMBean() {
-    synchronized (this.imageLock) {
+    this.imageLock.lock();
+    try {
       this.waMBean = this.seasideAdaptor.invokeMember("registerMBeanWithLock:", this.imageLock);
+    } finally {
+      this.imageLock.unlock();
     }
   }
 
@@ -189,23 +194,32 @@ public class SeasideGraalSqueakBridgeServlet implements Servlet {
     ServletNativeRequest nativeRequest = new ServletNativeRequest(request, response, this.seasideAdaptor);
     // GraalSqueak is not thread safe so we have to lock here
     // even though this is forbidden in Java EE
-    synchronized (this.imageLock) {
+    this.imageLock.lock();
+    try {
       this.seasideAdaptor.invokeMember("process:", nativeRequest);
+    } finally {
+      this.imageLock.unlock();
     }
   }
 
   private void unregisterMBean() {
-    synchronized (this.imageLock) {
+    this.imageLock.lock();
+    try {
       if (this.waMBean != null && !this.waMBean.isNull()) {
         this.waMBean.invokeMember("unregister");
       }
       this.waMBean = null;
+    } finally {
+      this.imageLock.unlock();
     }
   }
 
   private void stopSqueakImage() {
-    synchronized (this.imageLock) {
+    this.imageLock.lock();
+    try {
       this.graalContext.close();
+    } finally {
+      this.imageLock.unlock();
     }
     this.graalContext = null;
     this.waMBean = null;
